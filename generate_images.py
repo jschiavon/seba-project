@@ -6,7 +6,7 @@ from libimgs import *
 
 parser = argparse.ArgumentParser(description='Generate a grid of randomly rotated images.')
 
-parser.add_argument('images', type=str, nargs='+', action='append',
+parser.add_argument('images', type=int, nargs='+',
                     help='the numbers of the selected images')
 parser.add_argument('--folder', type=str, default='img',
                     help='image folder (default: img)')
@@ -21,10 +21,10 @@ args = parser.parse_args()
 
 _IMAGE_FOLDER = args.folder
 
-images = [join(_IMAGE_FOLDER, "01.jpg"), join(_IMAGE_FOLDER, "02.jpg")]  # Selected images
+images = [join(_IMAGE_FOLDER, f"{i:02}.jpg") for i in args.images]  # Selected images
 
 M = args.rows  # Number of rows
 N = args.cols  # Number of columns
 
 grid = create_grid(images, M, N)
-plot_grid(grid, out=args.output)
+plot_grid(grid, out=join(_IMAGE_FOLDER, args.output))
