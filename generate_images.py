@@ -13,9 +13,11 @@ parser.add_argument('--folder', type=str, default='img',
 parser.add_argument('--output', type=str, default='out.jpg',
                     help='output file (default: out.jpg)')
 parser.add_argument('-m', '--rows', type=int, default=3,
-                    help='Number of row of the grid')
+                    help='Number of row of the grid (default 3)')
 parser.add_argument('-n', '--cols', type=int, default=3,
-                    help='Number of columns of the grid')
+                    help='Number of columns of the grid (default 3)')
+parser.add_argument('-v', '--verbose', action='store_true',
+                    help='Verbosity of the script (default False)')
 
 args = parser.parse_args()
 
@@ -26,5 +28,5 @@ images = [join(_IMAGE_FOLDER, f"{i:02}.jpg") for i in args.images]  # Selected i
 M = args.rows  # Number of rows
 N = args.cols  # Number of columns
 
-grid = create_grid(images, M, N)
+grid = create_grid(images, M, N, verbose=args.verbose)
 plot_grid(grid, out=join(_IMAGE_FOLDER, args.output))

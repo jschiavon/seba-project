@@ -1,5 +1,6 @@
 from numpy.random import default_rng
 import matplotlib.pyplot as plt
+import numpy as np
 
 from PIL import Image
 from typing import Optional, Sequence
@@ -24,13 +25,14 @@ def generate_image(files: Sequence, rng):
     return im.rotate(ang, expand=True)
 
 
-def create_grid(files: Sequence, m: int = 2, n: int = 2, seed: Optional[int] = None) -> Sequence:
+def create_grid(files: Sequence, m: int = 2, n: int = 2, verbose: bool = False, seed: Optional[int] = None) -> Sequence:
     """
     Creates a grid of random images with random rotations.
 
     :param files: list of image paths where the images will be randomly chosen
     :param m: number of rows in the grid
     :param n: number of columns in the grid
+    :param verbose: boolean, if True print proceeding of the program
     :param seed: used to seed the random number generator, may be omitted
     :return: a list of list with, in each cell, an `Image` randomly selected from the given sequence
     and randomly rotated of a multiple of 90°
@@ -41,9 +43,26 @@ def create_grid(files: Sequence, m: int = 2, n: int = 2, seed: Optional[int] = N
         rng = default_rng(seed)
     img_grid = []
     for i in range(m):
+        if verbose: print(f"row : {i}")
         img_row = []
         for j in range(n):
-            img_row.append(generate_image(files, rng))
+            if verbose: print(f"\tcolumn : {j}", end='\t')
+            img = np.asarray(generate_image(files, rng))
+            check = False
+            k = 1
+            if j > 0:
+                check = (img == img_row[-1]).all()
+            if i > 0:
+                check = check or (img == img_grid[i - 1][j]).all()
+            while check:
+                k += 1
+                img = np.asarray(generate_image(files, rng))
+                if j > 0:
+                    check = (img == img_row[-1]).all()
+                if i > 0:
+                    check = check or (img == img_grid[i - 1][j]).all()
+            if verbose: print(f"{k} tries")
+            img_row.append(img)
         img_grid.append(img_row)
     return img_grid
 
