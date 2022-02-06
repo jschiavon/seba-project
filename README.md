@@ -33,7 +33,7 @@ in the same terminal. Notice that a mandatory argument is required: the images t
 
 An example of call then is `python generate_images.py 1 2 5`. Other possible options are shown in the help of the program, obtained by running `python generate_images.py --help` and is provided here:
 ```bash
-usage: generate_images.py [-h] [--folder FOLDER] [--output OUTPUT] [-m ROWS] [-n COLS] [-v]
+usage: generate_images.py [-h] [--folder FOLDER] [--output OUTPUT] [-m ROWS] [-n COLS] [-v] [-r REP]
                           images [images ...]
 
 Generate a grid of randomly rotated images.
@@ -44,8 +44,12 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   --folder FOLDER       image folder (default: img)
-  --output OUTPUT       output file (default: out.jpg)
+  --output OUTPUT       output file (default: out)
   -m ROWS, --rows ROWS  Number of row of the grid (default 3)
   -n COLS, --cols COLS  Number of columns of the grid (default 3)
   -v, --verbose         Verbosity of the script (default False)
+  -r REP, --repeat REP  how many repeating of the generation (default 1)
+
+The images in the image folder should be named 'X.jpg' with X a 2-digits padded number starting from
+'01.jpg'. Dealing with formats different from jpg is still not implemented.
 ```
