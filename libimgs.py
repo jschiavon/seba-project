@@ -14,15 +14,17 @@ def select_random_image(files: Sequence, rng):
         raise FileNotFoundError(f"The image {img_path} does not exist")
 
 
-def generate_random_angle(rng):
-    factor = rng.integers(low=0, high=3, endpoint=True)
-    return factor * 90
+# def generate_random_angle(rng):
+#     factor = rng.integers(low=0, high=3, endpoint=True)
+#     return factor * 90
 
 
-def generate_image(files: Sequence, rng):
-    im = select_random_image(files, rng)
-    ang = generate_random_angle(rng)
-    return im.rotate(ang, expand=True)
+# def generate_image(files: Sequence, rng):
+#     im = select_random_image(files, rng)
+#     ang = generate_random_angle(rng)
+#     return im.rotate(ang, expand=True)
+
+
 
 
 def create_grid(files: Sequence, m: int = 2, n: int = 2, verbose: bool = False, seed: Optional[int] = None) -> Sequence:
@@ -47,7 +49,7 @@ def create_grid(files: Sequence, m: int = 2, n: int = 2, verbose: bool = False, 
         img_row = []
         for j in range(n):
             if verbose: print(f"\tcolumn : {j}", end='\t')
-            img = np.asarray(generate_image(files, rng))
+            img = np.asarray(select_random_image(files, rng))
             check = False
             k = 1
             if j > 0:
@@ -56,7 +58,7 @@ def create_grid(files: Sequence, m: int = 2, n: int = 2, verbose: bool = False, 
                 check = check or (img == img_grid[i - 1][j]).all()
             while check:
                 k += 1
-                img = np.asarray(generate_image(files, rng))
+                img = np.asarray(select_random_image(files, rng))
                 if j > 0:
                     check = (img == img_row[-1]).all()
                 if i > 0:
@@ -67,12 +69,14 @@ def create_grid(files: Sequence, m: int = 2, n: int = 2, verbose: bool = False, 
     return img_grid
 
 
-def plot_grid(grid: Sequence, out: Optional[str] = None):
+def plot_grid(grid: Sequence, out: Optional[str] = None, verbose: bool = True, bg: Optional[str] = None):
     """
     Plot an image grid.
 
     :param grid: a list of lists containing `Image` objects to plot
     :param out: a filename that allows to output the resulting image. If omitted, does not save the image
+    :param verbose: if true, show the plot before closing
+    :param bg: background color when saving to jpg. Default to None but required if jpg
     """
     m = len(grid)
     n = len(grid[0])
@@ -85,5 +89,14 @@ def plot_grid(grid: Sequence, out: Optional[str] = None):
 
     plt.tight_layout()
     if out is not None:
-        plt.savefig(out)
-    plt.show()
+        out_format = out.split('.')[-1]
+        if out_format == 'png':
+            plt.savefig(out, transparent=True)
+        else:
+            if bg is None:
+                raise ValueError("bg is required if the output format is jpg")
+            plt.savefig(out, facecolor=bg)
+    if verbose:
+        plt.show()
+    else:
+        plt.close()

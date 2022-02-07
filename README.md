@@ -9,7 +9,7 @@
                                       |___/                                     
 ```
 
-A small script to generate a grid of random rotated images
+A small script to generate a grid of random images
 
 ## Install and satisfy requirements
 Open a terminal and move to the root folder of the project, then create a virtual environment
@@ -32,34 +32,35 @@ and then install the required packages:
 ```bash
 python -m pip install -r requirements.txt
 ```
-Finally, you need to prepare the images for the script: place them within the folder `img/` with for names integer number padded to two digits (*i.e.* `01.jpg`, `02.jpg`, ..., `10.jpg`, `11.jpg`, ...)
+Finally, you need to prepare the images for the script: place them within some folder in the same root of the program. The folders and images names are irrelevant.
 
 ## Use the script
 To use the script simply run
 ```bash
-python generate_images.py [images ...]
+python generate_images.py [floders ...]
 ```
-in the same terminal. Notice that a mandatory argument is required: the images to be selected. It is enough to provide the *un*-padded numbers (for instance `1 2 5`).
+in the same terminal. Notice that a mandatory argument is required: the folders to use. It is enough to provide the names of the folders that we want to use separated by spaces.
 
-An example of call then is `python generate_images.py 1 2 5`. Other possible options are shown in the help of the program, obtained by running `python generate_images.py --help` and is provided here:
+An example of call then is `python generate_images.py red black colorful` to generate a matrix of random images pulled randomly from the red, black and colorful folder. 
+
+Other possible options are shown in the help of the program, obtained by running `python generate_images.py --help` and is provided here:
 ```bash
-usage: generate_images.py [-h] [--folder FOLDER] [--output OUTPUT] [-m ROWS] [-n COLS] [-v] [-r REP]
-                          images [images ...]
+usage: generate_images.py [-h] [--output OUTPUT] [--format {jpg,png}] [--bg BG] [-m ROWS] [-n COLS] [-v] [-r REP] folders [folders ...]
 
 Generate a grid of randomly rotated images.
 
 positional arguments:
-  images                the numbers of the selected images
+  folders               the numbers of the folders to use
 
 options:
   -h, --help            show this help message and exit
-  --folder FOLDER       image folder (default: img)
-  --output OUTPUT       output file (default: out)
+  --output OUTPUT       output file name (default: don't save)
+  --format {jpg,png}    output format (default: png)
+  --bg BG               color for the background for jpg images (required only if `format = jpg`
   -m ROWS, --rows ROWS  Number of row of the grid (default 3)
   -n COLS, --cols COLS  Number of columns of the grid (default 3)
   -v, --verbose         Verbosity of the script (default False)
   -r REP, --repeat REP  how many repeating of the generation (default 1)
 
-The images in the image folder should be named 'X.jpg' with X a 2-digits padded number starting from
-'01.jpg'. Dealing with formats different from jpg is still not implemented.
+The images should be saved in their image folders. Only the name of the folder is required, and all the images within the selected folders are used.
 ```
