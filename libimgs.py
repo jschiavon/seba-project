@@ -1,17 +1,19 @@
 from numpy.random import default_rng
 import matplotlib.pyplot as plt
-import numpy as np
+import matplotlib.image as mpimg
 
-from PIL import Image
+# from PIL import Image
 from typing import Optional, Sequence
 
 
-def select_random_image(files: Sequence, rng):
-    img_path = rng.choice(files)
-    try:
-        return Image.open(img_path), img_path
-    except FileNotFoundError:
-        raise FileNotFoundError(f"The image {img_path} does not exist")
+# def select_random_image(files: Sequence, rng):
+#     img_path = rng.choice(files)
+#     try:
+#         # img = Image.open(img_path)
+#         img = mpimg.imread(img_path)
+#         return img, img_path
+#     except FileNotFoundErro r:
+#         raise FileNotFoundError(f"The image {img_path} does not exist")
 
 
 # def generate_random_angle(rng):
@@ -25,9 +27,11 @@ def select_random_image(files: Sequence, rng):
 #     return im.rotate(ang, expand=True)
 
 
-
-
-def create_grid(files: Sequence, m: int = 2, n: int = 2, verbose: bool = False, seed: Optional[int] = None) -> Sequence:
+def create_grid(files: Sequence,
+                m: int = 2,
+                n: int = 2,
+                verbose: bool = False,
+                seed: Optional[int] = None) -> Sequence:
     """
     Creates a grid of random images with random rotations.
 
@@ -51,7 +55,7 @@ def create_grid(files: Sequence, m: int = 2, n: int = 2, verbose: bool = False, 
         img_name_row = []
         for j in range(n):
             if verbose: print(f"\tcolumn : {j}", end='\t')
-            img, img_name = select_random_image(files, rng)
+            img_name = rng.choice(files)
             check = False
             k = 1
             if j > 0:
@@ -60,12 +64,17 @@ def create_grid(files: Sequence, m: int = 2, n: int = 2, verbose: bool = False, 
                 check = check or (img_name == img_names[i - 1][j])
             while check:
                 k += 1
-                img, img_name = select_random_image(files, rng)
+                img_name = rng.choice(files)
                 if j > 0:
                     check = (img_name == img_name_row[-1])
                 if i > 0:
                     check = check or (img_name == img_names[i - 1][j])
             if verbose: print(f"{k} tries")
+            try:
+                # img = Image.open(img_path)
+                img = mpimg.imread(img_name)
+            except FileNotFoundError:
+                raise FileNotFoundError(f"The image {img_name} does not exist")
             img_row.append(img)
             img_name_row.append(img_name)
         img_grid.append(img_row)
