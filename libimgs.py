@@ -9,7 +9,7 @@ from typing import Optional, Sequence
 def select_random_image(files: Sequence, rng):
     img_path = rng.choice(files)
     try:
-        return Image.open(img_path)
+        return Image.open(img_path), img_path
     except FileNotFoundError:
         raise FileNotFoundError(f"The image {img_path} does not exist")
 
@@ -44,28 +44,32 @@ def create_grid(files: Sequence, m: int = 2, n: int = 2, verbose: bool = False, 
     else:
         rng = default_rng(seed)
     img_grid = []
+    img_names = []
     for i in range(m):
         if verbose: print(f"row : {i}")
         img_row = []
+        img_name_row = []
         for j in range(n):
             if verbose: print(f"\tcolumn : {j}", end='\t')
-            img = np.asarray(select_random_image(files, rng))
+            img, img_name = select_random_image(files, rng)
             check = False
             k = 1
             if j > 0:
-                check = (img == img_row[-1]).all()
+                check = (img_name == img_name_row[-1])
             if i > 0:
-                check = check or (img == img_grid[i - 1][j]).all()
+                check = check or (img_name == img_names[i - 1][j])
             while check:
                 k += 1
-                img = np.asarray(select_random_image(files, rng))
+                img, img_name = select_random_image(files, rng)
                 if j > 0:
-                    check = (img == img_row[-1]).all()
+                    check = (img_name == img_name_row[-1])
                 if i > 0:
-                    check = check or (img == img_grid[i - 1][j]).all()
+                    check = check or (img_name == img_names[i - 1][j])
             if verbose: print(f"{k} tries")
             img_row.append(img)
+            img_name_row.append(img_name)
         img_grid.append(img_row)
+        img_names.append(img_name_row)
     return img_grid
 
 
