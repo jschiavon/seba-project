@@ -1,4 +1,5 @@
 from numpy.random import default_rng
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
@@ -47,14 +48,13 @@ def create_grid(files: Sequence,
         rng = default_rng()
     else:
         rng = default_rng(seed)
-    img_grid = []
+
     img_names = []
     for i in range(m):
-        if verbose: print(f"row : {i}")
-        img_row = []
+        if verbose: print(f"row : {i+1}")
         img_name_row = []
         for j in range(n):
-            if verbose: print(f"\tcolumn : {j}", end='\t')
+            if verbose: print(f"\tcolumn : {j+1}", end='\t')
             img_name = rng.choice(files)
             check = False
             k = 1
@@ -70,15 +70,19 @@ def create_grid(files: Sequence,
                 if i > 0:
                     check = check or (img_name == img_names[i - 1][j])
             if verbose: print(f"{k} tries")
-            try:
-                # img = Image.open(img_path)
-                img = mpimg.imread(img_name)
-            except FileNotFoundError:
-                raise FileNotFoundError(f"The image {img_name} does not exist")
-            img_row.append(img)
             img_name_row.append(img_name)
-        img_grid.append(img_row)
         img_names.append(img_name_row)
+    img_grid = []
+    for i in range(m):
+        img_row = []
+        for j in range(n):
+            try:
+                img = mpimg.imread(img_names[i][j])
+            except FileNotFoundError:
+                raise FileNotFoundError(f"The image {img_names[i][j]} does not exist")
+            img_row.append(img)
+        img_grid.append(img_row)
+
     return img_grid
 
 
@@ -93,16 +97,26 @@ def plot_grid(grid: Sequence, out: Optional[str] = None, verbose: bool = True, b
     """
     m = len(grid)
     n = len(grid[0])
+    out_format = out.split('.')[-1]
+
+    img_size = 290
+    blank_space = 58
+    if out_format == 'png':
+        dpi = 72
+    else:
+        dpi = 300
+    total_width = n * img_size + (n - 1) * blank_space
+    total_height = m * img_size + (m - 1) * blank_space
+
+    _, ax = plt.subplots(nrows=m, ncols=n, figsize=(total_width / dpi, total_height / dpi), dpi=dpi)
 
     for i in range(m):
         for j in range(n):
-            plt.subplot(m, n, n * i + j + 1)
-            plt.imshow(grid[i][j])
-            plt.axis('off')
-
+            ax[i][j].imshow(grid[i][j])
+            ax[i][j].axis('off')
     plt.tight_layout()
     if out is not None:
-        out_format = out.split('.')[-1]
+
         if out_format == 'png':
             plt.savefig(out, transparent=True)
         else:

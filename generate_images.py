@@ -1,6 +1,6 @@
 import os
 import argparse
-import sys
+import re
 
 from libimgs import *
 
@@ -17,7 +17,7 @@ parser.add_argument('--output', type=str, default=None,
 parser.add_argument('--format', type=str, choices=['jpg', 'png'], default='png',
                     help="output format (default: png)")
 parser.add_argument('--bg', type=str, default=None,
-                    help="color for the background for jpg images (required only if `format = jpg`")
+                    help="hex code of the background color (only for jpg images)")
 parser.add_argument('-m', '--rows', type=int, default=3,
                     help='Number of row of the grid (default 3)')
 parser.add_argument('-n', '--cols', type=int, default=3,
@@ -45,7 +45,11 @@ if __name__ == '__main__':
     if args.format == 'jpg' and args.bg is None:
         raise ValueError("Background color is required for jpg images!")
     if args.bg is not None:
-        bg = '#' + args.bg
+        bg = args.bg
+        if bg[0] != '#':
+            bg = '#' + bg
+        if not re.search("^#(?:[0-9a-fA-F]{3}){1,2}$", bg):
+            raise ValueError(f"Bg color specified wrongly: it has to be a 6-digit hex code, got {bg} instead")
     else:
         bg = None
     M = args.rows  # Number of rows
@@ -53,6 +57,8 @@ if __name__ == '__main__':
 
     if args.rep > 1:
         for i in range(args.repeat):
+            if args.verbose:
+                print(f"Repetition {i+1}:")
             if args.output is None:
                 out = None
             else:
@@ -62,6 +68,8 @@ if __name__ == '__main__':
                     pass
                 out = os.path.join('outputs', f"{args.output}_{i}.{args.format}")
             grid = create_grid(images, M, N, verbose=args.verbose)
+            if args.verbose:
+                print(f"Grid created with ({M} x {N}) images")
             plot_grid(grid, out=out, verbose=args.verbose, bg=bg)
     else:
         if args.output is None:
@@ -73,4 +81,6 @@ if __name__ == '__main__':
                 pass
             out = os.path.join('outputs', f"{args.output}.{args.format}")
         grid = create_grid(images, M, N, verbose=args.verbose)
+        if args.verbose:
+            print(f"Grid created with ({M} x {N}) images")
         plot_grid(grid, out=out, verbose=args.verbose, bg=bg)
