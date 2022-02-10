@@ -6,10 +6,10 @@ from libimgs import *
 
 from pyfiglet import Figlet
 
-parser = argparse.ArgumentParser(description="Generate a grid of randomly rotated images.",
-                                 epilog="""The images in the image folder should be named 'X.jpg' with X a 2-digits
-                                        padded number starting from '01.jpg'. Dealing with formats different from 
-                                        jpg is still not implemented.""")
+parser = argparse.ArgumentParser(description="Generate a grid of random images taken from a group of folders.",
+                                 epilog="""All the images to be used should be saved within one (or more folder). 
+                                 Only the folders' name is required, and all the images within the selected folders 
+                                 will then be used.""")
 parser.add_argument('folders', type=str, nargs='+',
                     help='the numbers of the folders to use')
 parser.add_argument('--output', type=str, default=None,
@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     images = []
     for dirs in args.folders:
-        dir_name = os.path.join("Colori", dirs)
+        dir_name = os.path.join("imgs", dirs)
         images += [os.path.join(dir_name, f) for f in os.listdir(dir_name)
                    if ((f[0] != '.') and os.path.isfile(os.path.join(dir_name, f)))]
 
