@@ -108,7 +108,7 @@ def plot_grid(grid: Sequence, out: Optional[str] = None, verbose: bool = True, b
     total_width = n * img_size + (n - 1) * blank_space
     total_height = m * img_size + (m - 1) * blank_space
 
-    _, ax = plt.subplots(nrows=m, ncols=n, figsize=(total_width / dpi, total_height / dpi), dpi=dpi)
+    _, ax = plt.subplots(nrows=m, ncols=n, figsize=(total_width / dpi, total_height / dpi), dpi=dpi, squeeze=False)
 
     for i in range(m):
         for j in range(n):
